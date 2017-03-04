@@ -2,12 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import createStore from './store/createStore'
 import AppContainer from './containers/AppContainer'
+import Maze from './lib/Maze';
 
 // ========================================================
 // Store Instantiation
 // ========================================================
 const initialState = window.___INITIAL_STATE__
 const store = createStore(initialState)
+
+window.API = new Maze(store);
 
 // ========================================================
 // Render Setup
@@ -58,3 +61,5 @@ if (__DEV__) {
 // Go!
 // ========================================================
 render()
+
+window.API.configMaze()

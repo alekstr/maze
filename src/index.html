@@ -3,10 +3,48 @@
 <head>
   <title>React Redux Starter Kit</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="http://www.skulpt.org/static/skulpt.min.js" type="text/javascript"></script>
+  <script src="http://www.skulpt.org/static/skulpt-stdlib.js" type="text/javascript"></script>
 </head>
 <body>
   <div id="root" style="height: 100%"></div>
+
+  <script>
+    var output = '';
+
+    function outf(text) {
+      output = output + text;
+    }
+
+    function builtinRead(x) {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    }
+    window.stopCode = function () {
+      Sk.hardInterrupt = true;
+    }
+    window.runCode = function(prog) {
+      Sk.setTimeout = function(func, delay) { setTimeout(func, delay); };
+      Sk.externalLibraries = {
+        maze: {
+          path: '/js/maze/__init__.js'
+        }
+      };
+
+      Sk.configure({output:outf, read:builtinRead});
+
+      var myPromise = Sk.misceval.asyncToPromise(function() {
+        return Sk.importMainWithBody("<stdin>", false, prog, true);
+      });
+
+      return myPromise.then(function(mod) {
+        var ret = output;
+        output = '';
+        return ret;
+      })
+    }
+  </script>
 </body>
 </html>
